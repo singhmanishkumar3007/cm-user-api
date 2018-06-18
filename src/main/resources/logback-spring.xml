@@ -26,9 +26,8 @@
 		</appender>
 
 
-		<root level="ERROR">
+		<root level="DEBUG">
 			<appender-ref ref="CONSOLE" />
-			<appender-ref ref="ROLLING-FILE" />
 		</root>
 		<logger name="com.cloudcompilerr.development" level="INFO">
 			<appender-ref ref="CONSOLE" />
