@@ -1,0 +1,28 @@
+server:
+  servlet:
+    context-path: /users/api
+  port: 6063    
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2_console
+      settings:
+        trace: true
+        #web-allow-others: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    # jdbc:h2:mem is used to define In-memory databases.
+    # jdbc:h2:file is used to define disk-based databases.
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true   
+           
+ 
+  
+      
+        
