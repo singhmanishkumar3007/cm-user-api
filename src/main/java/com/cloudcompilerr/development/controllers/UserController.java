@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.Validator;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -60,11 +59,12 @@ public class UserController {
 
 		if (bindingResult.hasErrors()) {
 			Logger.error("Validation failure for Request Body");
-			List<ObjectError> objectErrors = bindingResult.getAllErrors();
-			String objectErr = objectErrors.stream().map(objectError -> objectError.getDefaultMessage())
-					.collect(Collectors.joining(","));
+			List<String[]> objectErrors = bindingResult.getAllErrors().stream()
+					.map(bindingError -> bindingError.getCodes()).collect(Collectors.toList());
+			String errors = objectErrors.stream().map(objectErrorArray -> String.join(",", objectErrorArray))
+					.collect(Collectors.joining());
 			StandardError standardError = StandardError.builder().method("addusers").field("requestbody")
-					.message(objectErr).build();
+					.message(errors).build();
 			StandardException standardException = new StandardException(HttpStatus.BAD_REQUEST,
 					Arrays.asList(standardError), StandardErrorCode.SC400, new Throwable("Bad Message request"));
 			throw standardException;

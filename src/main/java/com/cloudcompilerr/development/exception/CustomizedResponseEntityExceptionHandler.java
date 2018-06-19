@@ -1,6 +1,5 @@
 package com.cloudcompilerr.development.exception;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import org.springframework.http.HttpStatus;
@@ -23,11 +22,13 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 				ex.getHttpStatus() != null ? ex.getHttpStatus() : HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-//	@ExceptionHandler(Exception.class)
-//	public final ResponseEntity<ErrorDetails> handleAllExceptions(Exception ex, WebRequest request) {
-//		ErrorDetails errorDetails = new ErrorDetails(new Date(), new ArrayList<>(), StandardErrorCode.SC500,
-//				request.getDescription(false));
-//		return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
-//	}
+	// @ExceptionHandler(Exception.class)
+	// public final ResponseEntity<ErrorDetails> handleAllExceptions(Exception ex,
+	// WebRequest request) {
+	// ErrorDetails errorDetails = new ErrorDetails(new Date(), new ArrayList<>(),
+	// StandardErrorCode.SC500,
+	// request.getDescription(false));
+	// return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+	// }
 
 }
