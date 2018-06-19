@@ -1,70 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<include
-		resource="org/springframework/boot/logging/logback/base.xml" />
-	<property name="LOG_FILE" value="logs/user-api.log" />
-	<property name="FILE_LOG_PATTERN"
-		value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %d %-5level %logger{36} - %msg%n [%X{api-client-ip} -%X{api-request-method}]" />
+	<include resource="org/springframework/boot/logging/logback/base.xml" />
+	<property name="logPattern" value="%d %-5level %logger{35} - %msg%n [%X{api-client-ip} -%X{api-request-method}]" />
+	<property name="logEncoding" value="UTF-8" />
+	<property name="logDirectory" value="logs" />
 
-	<springProfile name="dev,test,default">
-		<include
-			resource="org/springframework/boot/logging/logback/console-appender.xml" />
-		<appender name="ROLLING-FILE"
-			class="ch.qos.logback.core.rolling.RollingFileAppender">
-			<encoder>
-				<pattern>${FILE_LOG_PATTERN}</pattern>
-			</encoder>
-			<file>${LOG_FILE}</file>
-			<rollingPolicy
-				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-				<fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-				<timeBasedFileNamingAndTriggeringPolicy
-					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-					<maxFileSize>10MB</maxFileSize>
-				</timeBasedFileNamingAndTriggeringPolicy>
-			</rollingPolicy>
-		</appender>
+	<appender name="fileAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logDirectory}/cm_user_api%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>300KB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<charset>${logEncoding}</charset>
+			<pattern>${logPattern}</pattern>
+		</encoder>
+	</appender>
 
+	<logger name="org.springframework" level="DEBUG" />
 
-		<root level="DEBUG">
+	<root level="INFO">
+		<appender-ref ref="fileAppender" />
+	</root>
+	<springProfile name="dev,ppe,it,default">
+		<logger name="com.cloudcompilerr.development" level="DEBUG" additivity="false">
 			<appender-ref ref="CONSOLE" />
-		</root>
-		<logger name="com.cloudcompilerr.development" level="INFO">
-			<appender-ref ref="CONSOLE" />
-			<appender-ref ref="ROLLING-FILE" />
+			<appender-ref ref="fileAppender" />
 		</logger>
-		<!-- <logger name="org.apache.kafka" level="WARN">
-			<appender-ref ref="CONSOLE" />
-			<appender-ref ref="ROLLING-FILE" />
-		</logger> -->
+		>
 	</springProfile>
-
-
-
-	<springProfile name="prod">
-		<appender name="ROLLING-FILE"
-			class="ch.qos.logback.core.rolling.RollingFileAppender">
-			<encoder>
-				<pattern>${FILE_LOG_PATTERN}</pattern>
-			</encoder>
-			<file>${LOG_FILE}</file>
-			<rollingPolicy
-				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-				<fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
-				<timeBasedFileNamingAndTriggeringPolicy
-					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-					<maxFileSize>10MB</maxFileSize>
-				</timeBasedFileNamingAndTriggeringPolicy>
-			</rollingPolicy>
-		</appender>
-
-		<root level="ERROR">
-			<appender-ref ref="ROLLING-FILE" />
-		</root>
-		<logger name="com.cloudcompilerr" level="DEBUG">
-			<appender-ref ref="CONSOLE" />
-			<appender-ref ref="ROLLING-FILE-1" />
+	<springProfile name="production">
+		<logger name="com.management.user" level="WARN"
+			additivity="false">
+			<appender-ref ref="FILE" />
 		</logger>
 	</springProfile>
-
 </configuration>

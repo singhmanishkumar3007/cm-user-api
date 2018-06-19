@@ -1,7 +1,9 @@
 package com.cloudcompilerr.development.controllers;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.Validator;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -23,6 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cloudcompilerr.development.domain.Gender;
 import com.cloudcompilerr.development.domain.PaginatedResult;
 import com.cloudcompilerr.development.domain.UserDetails;
+import com.cloudcompilerr.development.exception.StandardError;
+import com.cloudcompilerr.development.exception.StandardErrorCode;
+import com.cloudcompilerr.development.exception.StandardException;
 import com.cloudcompilerr.development.service.UserDetailsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -49,12 +55,19 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/add_user", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> addUsers(@Validated @RequestBody UserDetails userDetails,
-			BindingResult bindingResult) throws Exception {
+	public ResponseEntity<String> addUsers(@Validated @RequestBody UserDetails userDetails, BindingResult bindingResult)
+			throws Exception {
 
 		if (bindingResult.hasErrors()) {
 			Logger.error("Validation failure for Request Body");
-			throw new Exception("Invalid Body");
+			List<ObjectError> objectErrors = bindingResult.getAllErrors();
+			String objectErr = objectErrors.stream().map(objectError -> objectError.getDefaultMessage())
+					.collect(Collectors.joining(","));
+			StandardError standardError = StandardError.builder().method("addusers").field("requestbody")
+					.message(objectErr).build();
+			StandardException standardException = new StandardException(HttpStatus.BAD_REQUEST,
+					Arrays.asList(standardError), StandardErrorCode.SC400, new Throwable("Bad Message request"));
+			throw standardException;
 		}
 
 		Logger.info("adding single user {}", userDetails);
@@ -62,7 +75,8 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/add_user/multiple", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<Integer, String>> addMultipleUsers(@RequestBody List<UserDetails> userDetails) throws Exception {
+	public ResponseEntity<Map<Integer, String>> addMultipleUsers(@RequestBody List<UserDetails> userDetails)
+			throws Exception {
 
 		Logger.info("list of users to be added is {}", new ObjectMapper().writeValueAsString(userDetails));
 		return new ResponseEntity<Map<Integer, String>>(userDetailsService.addMultipleUsers(userDetails),
