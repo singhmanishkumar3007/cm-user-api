@@ -1,5 +1,6 @@
 package com.cloudcompilerr.development.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,7 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.cloudcompilerr.development.controllers.PaginatedResult;
+import com.cloudcompilerr.development.domain.Gender;
+import com.cloudcompilerr.development.domain.PaginatedResult;
 import com.cloudcompilerr.development.domain.UserDetails;
 import com.cloudcompilerr.development.entity.UserEntity;
 import com.cloudcompilerr.development.repository.UserDetailsRepository;
@@ -54,6 +56,20 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		List<UserDetails> userDetails = new UserEntityToUserDetailsTransformer().apply(userEntitiesInPage.getContent());
 		PaginatedResult<UserDetails> paginatedUsers = new PaginatedResult<>(totalNumberOfPages, userDetails);
 		return paginatedUsers;
+	}
+
+	@Override
+	public List<UserDetails> findUsersByMatchingNameAndGender(String name, Gender gender) {
+
+		return new UserEntityToUserDetailsTransformer()
+				.apply(userDetailsRepository.getUsersByMatchingNameAndGender(name, gender.name()));
+	}
+
+	@Override
+	public UserDetails findUserById(String id) {
+
+		UserEntity userData = userDetailsRepository.findById(Integer.parseInt(id)).orElse(null);
+		return new UserEntityToUserDetailsTransformer().apply(Arrays.asList(userData)).stream().findFirst().get();
 	}
 
 }
