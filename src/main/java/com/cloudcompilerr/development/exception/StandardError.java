@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StandardError {
 
-	private String method;
-	private String field;
-	private String message;
+    private String method;
+    private String field;
+    private String message;
 
 }

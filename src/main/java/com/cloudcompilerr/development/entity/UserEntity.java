@@ -26,14 +26,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "USER_DETAILS")
 public class UserEntity {
 
-	@Id
-	@Column(name = "USER_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer userId;
+    @Id
+    @Column(name = "USER_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer userId;
 
-	@Column(name = "NAME", unique = true)
-	private String userName;
+    @Column(name = "NAME",
+            unique = true)
+    private String userName;
 
-	@Column(name = "GENDER")
-	private String gender;
+    @Column(name = "GENDER")
+    private String gender;
 }

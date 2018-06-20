@@ -1,6 +1,9 @@
 buildscript {
     ext {
 		springBootVersion = '2.0.2.RELEASE'
+		jacocoVersion = '0.7.7.201606060606'
+  		checkstyleVersion = '7.2'
+  		pmdVersion = '5.5.2'
 	}
     repositories {
         mavenLocal()
@@ -20,15 +23,21 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'jacoco'
 apply plugin: "maven"
 apply plugin: "jacoco"
+apply plugin: "checkstyle"
+apply plugin: "pmd"
+apply plugin: "project-report"
+apply plugin: "build-dashboard"
+
 
 bootJar {
-    group    = "com.cloudcompilerr"
+    
     baseName = 'cm-user-api'
-    version =  '0.1.0'
+    
 }
 
 repositories {
     mavenLocal()
+    jcenter()
     mavenCentral()
 }
 
@@ -50,14 +59,62 @@ dependencies {
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 
+jacoco {
+  toolVersion = jacocoVersion
+  
+}
+
 jacocoTestReport {
-    group = "Reporting"
-    reports {
-        xml.enabled true
-        csv.enabled false
-        html.destination "${buildDir}/reports/coverage"
+  reports {
+    html.enabled = true
+    xml.enabled = true
+    csv.enabled = true
+  }
+  afterEvaluate {
+   classDirectories = files(classDirectories.files.collect {
+      fileTree(dir: it, exclude: [
+         '**/*UserApplication**'
+        ])
+       })
+      }
+}
+
+//test.finalizedBy jacocoTestReport
+
+
+test { 
+ finalizedBy jacocoTestReport 
+ ignoreFailures = false
+ 
+}
+
+
+checkstyle {
+  toolVersion = checkstyleVersion
+  config = rootProject.resources.text.fromFile('etc/checkstyle/rules.xml')
+}
+
+// use below if u ant to fail build for checkstyl failure
+tasks.withType(Checkstyle).each { checkstyleTask ->
+    checkstyleTask.doLast {
+        reports.all { report ->
+            def outputFile = report.destination
+            if (outputFile.exists() && outputFile.text.contains("<error ")) {
+                throw new GradleException("There were checkstyle warnings! For more info check $outputFile")
+            }
+        }
     }
 }
+
+pmd {
+  toolVersion = pmdVersion
+  ruleSetConfig = rootProject.resources.text.fromFile('etc/pmd/ruleset.xml')
+  ignoreFailures = true // set false if u want to fail build for pmd failure
+}
+
+check.finalizedBy projectReport
+
+projectReport.finalizedBy buildDashboard
 
 // create  a fat jar using the jar task from java plugin
 /*jar {

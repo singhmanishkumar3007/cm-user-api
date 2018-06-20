@@ -22,54 +22,54 @@ import com.cloudcompilerr.development.transformers.UserEntityToUserDetailsTransf
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-	private final UserDetailsRepository userDetailsRepository;
+    private final UserDetailsRepository userDetailsRepository;
 
-	@Autowired
-	public UserDetailsServiceImpl(UserDetailsRepository userDetailsRepository) {
-		this.userDetailsRepository = userDetailsRepository;
-	}
+    @Autowired
+    public UserDetailsServiceImpl(UserDetailsRepository userDetailsRepository) {
+        this.userDetailsRepository = userDetailsRepository;
+    }
 
-	@Override
-	public String addUser(UserDetails userDetails) {
-		UserEntity userEntity = UserEntity.builder().gender(userDetails.getGender().name())
-				.userName(userDetails.getUserName()).build();
-		UserEntity userAdded = userDetailsRepository.save(userEntity);
-		return userAdded.getUserId().toString();
-	}
+    @Override
+    public String addUser(UserDetails userDetails) {
+        UserEntity userEntity = UserEntity.builder().gender(userDetails.getGender().name())
+                .userName(userDetails.getUserName()).build();
+        UserEntity userAdded = userDetailsRepository.save(userEntity);
+        return userAdded.getUserId().toString();
+    }
 
-	@Override
-	public Map<Integer, String> addMultipleUsers(List<UserDetails> userDetails) {
-		List<UserEntity> userEntities = new UserDetailsToUserEntityTransformer().apply(userDetails);
-		List<UserEntity> userEntitiesAdded = (List<UserEntity>) userDetailsRepository.saveAll(userEntities);
-		Map<Integer, String> addedUsersMap = userEntitiesAdded.stream()
-				.collect(Collectors.toMap(UserEntity::getUserId, UserEntity::getUserName));
-		return addedUsersMap;
-	}
+    @Override
+    public Map<Integer, String> addMultipleUsers(List<UserDetails> userDetails) {
+        List<UserEntity> userEntities = new UserDetailsToUserEntityTransformer().apply(userDetails);
+        List<UserEntity> userEntitiesAdded = (List<UserEntity>) userDetailsRepository.saveAll(userEntities);
+        Map<Integer, String> addedUsersMap = userEntitiesAdded.stream()
+                .collect(Collectors.toMap(UserEntity::getUserId, UserEntity::getUserName));
+        return addedUsersMap;
+    }
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public PaginatedResult<UserDetails> findUsers(Integer page, Integer perPage) {
+    @SuppressWarnings("deprecation")
+    @Override
+    public PaginatedResult<UserDetails> findUsers(Integer page, Integer perPage) {
 
-		Pageable pageable = new PageRequest(page, perPage);
-		Page<UserEntity> userEntitiesInPage = userDetailsRepository.findAll(pageable);
-		Long totalNumberOfPages = userEntitiesInPage.getTotalElements();
-		List<UserDetails> userDetails = new UserEntityToUserDetailsTransformer().apply(userEntitiesInPage.getContent());
-		PaginatedResult<UserDetails> paginatedUsers = new PaginatedResult<>(totalNumberOfPages, userDetails);
-		return paginatedUsers;
-	}
+        Pageable pageable = new PageRequest(page, perPage);
+        Page<UserEntity> userEntitiesInPage = userDetailsRepository.findAll(pageable);
+        Long totalNumberOfPages = userEntitiesInPage.getTotalElements();
+        List<UserDetails> userDetails = new UserEntityToUserDetailsTransformer().apply(userEntitiesInPage.getContent());
+        PaginatedResult<UserDetails> paginatedUsers = new PaginatedResult<>(totalNumberOfPages, userDetails);
+        return paginatedUsers;
+    }
 
-	@Override
-	public List<UserDetails> findUsersByMatchingNameAndGender(String name, Gender gender) {
+    @Override
+    public List<UserDetails> findUsersByMatchingNameAndGender(String name, Gender gender) {
 
-		return new UserEntityToUserDetailsTransformer()
-				.apply(userDetailsRepository.getUsersByMatchingNameAndGender(name, gender.name()));
-	}
+        return new UserEntityToUserDetailsTransformer()
+                .apply(userDetailsRepository.getUsersByMatchingNameAndGender(name, gender.name()));
+    }
 
-	@Override
-	public UserDetails findUserById(String id) {
+    @Override
+    public UserDetails findUserById(String id) {
 
-		UserEntity userData = userDetailsRepository.findById(Integer.parseInt(id)).orElse(null);
-		return new UserEntityToUserDetailsTransformer().apply(Arrays.asList(userData)).stream().findFirst().get();
-	}
+        UserEntity userData = userDetailsRepository.findById(Integer.parseInt(id)).orElse(null);
+        return new UserEntityToUserDetailsTransformer().apply(Arrays.asList(userData)).stream().findFirst().get();
+    }
 
 }

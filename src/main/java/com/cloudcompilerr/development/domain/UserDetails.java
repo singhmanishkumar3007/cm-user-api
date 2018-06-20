@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 public class UserDetails {
 
-	private String userId;
-	private String userName;
-	private Gender gender;
+    private String userId;
+    private String userName;
+    private Gender gender;
 
 }

@@ -9,14 +9,14 @@ import com.cloudcompilerr.development.domain.UserDetails;
 
 public interface UserDetailsService {
 
-	String addUser(UserDetails userDetails);
+    String addUser(UserDetails userDetails);
 
-	Map<Integer, String> addMultipleUsers(List<UserDetails> userDetails);
+    Map<Integer, String> addMultipleUsers(List<UserDetails> userDetails);
 
-	PaginatedResult<UserDetails> findUsers(Integer page, Integer perPage);
+    PaginatedResult<UserDetails> findUsers(Integer page, Integer perPage);
 
-	List<UserDetails> findUsersByMatchingNameAndGender(String name, Gender gender);
+    List<UserDetails> findUsersByMatchingNameAndGender(String name, Gender gender);
 
-	UserDetails findUserById(String id);
+    UserDetails findUserById(String id);
 
 }

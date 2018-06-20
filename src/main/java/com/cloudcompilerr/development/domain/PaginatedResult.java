@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 public class PaginatedResult<T> {
 
-	private Long totalCount;
-	private List<T> result;
+    private Long totalCount;
+    private List<T> result;
 
 }

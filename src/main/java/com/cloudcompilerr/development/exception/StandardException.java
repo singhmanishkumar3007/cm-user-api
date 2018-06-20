@@ -16,23 +16,23 @@ import lombok.NoArgsConstructor;
 
 public class StandardException extends Exception {
 
-	private static final long serialVersionUID = -5190796526753119931L;
+    private static final long serialVersionUID = -5190796526753119931L;
 
-	private HttpStatus httpStatus;
+    private HttpStatus httpStatus;
 
-	private List<StandardError> standardError;
+    private List<StandardError> standardError;
 
-	private StandardErrorCode standardErrorCode;
+    private StandardErrorCode standardErrorCode;
 
-	private Throwable cause;
+    private Throwable cause;
 
-	public StandardException(HttpStatus httpStatus, List<StandardError> standardError,
-			StandardErrorCode standardErrorCode, Throwable cause) {
-		super();
-		this.httpStatus = httpStatus;
-		this.standardErrorCode = standardErrorCode;
-		this.standardError = standardError;
-		this.cause = cause;
-	}
+    public StandardException(HttpStatus httpStatus, List<StandardError> standardError,
+            StandardErrorCode standardErrorCode, Throwable cause) {
+        super();
+        this.httpStatus = httpStatus;
+        this.standardErrorCode = standardErrorCode;
+        this.standardError = standardError;
+        this.cause = cause;
+    }
 
 }

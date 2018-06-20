@@ -19,9 +19,9 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ErrorDetails {
-	private Date timestamp;
-	private List<StandardError> message;
-	private StandardErrorCode errorCode;
-	private String details;
+    private Date timestamp;
+    private List<StandardError> message;
+    private StandardErrorCode errorCode;
+    private String details;
 
 }
