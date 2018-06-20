@@ -84,7 +84,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
         excludes = [
-         'com.cloudcompilerr.development.*'
+        // 'com.cloudcompilerr.development.*'
          
         ]
             limit {
@@ -94,6 +94,7 @@ jacocoTestCoverageVerification {
         rule {
         excludes = [
          'com.cloudcompilerr.development.*'
+        //'**.*UserApplication**'
         ]
             enabled = true
             element = 'CLASS'
