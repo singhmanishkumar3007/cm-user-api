@@ -73,10 +73,43 @@ jacocoTestReport {
   afterEvaluate {
    classDirectories = files(classDirectories.files.collect {
       fileTree(dir: it, exclude: [
-         '**/*UserApplication**'
+         //'**/*UserApplication**',
+        // 'com/cloudcompilerr/development/**'
         ])
        })
       }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+        excludes = [
+         'com.cloudcompilerr.development.*'
+         
+        ]
+            limit {
+                minimum = 0.08
+            }
+        }
+        rule {
+        excludes = [
+         'com.cloudcompilerr.development.*'
+        ]
+            enabled = true
+            element = 'CLASS'
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.6
+            }
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.5
+            }
+            
+        }
+    }
 }
 
 //test.finalizedBy jacocoTestReport
@@ -94,7 +127,7 @@ checkstyle {
   config = rootProject.resources.text.fromFile('etc/checkstyle/rules.xml')
 }
 
-// use below if u ant to fail build for checkstyl failure
+// use below if u want to fail build for checkstyle failure
 tasks.withType(Checkstyle).each { checkstyleTask ->
     checkstyleTask.doLast {
         reports.all { report ->
@@ -111,6 +144,8 @@ pmd {
   ruleSetConfig = rootProject.resources.text.fromFile('etc/pmd/ruleset.xml')
   ignoreFailures = true // set false if u want to fail build for pmd failure
 }
+
+check.dependsOn jacocoTestCoverageVerification
 
 check.finalizedBy projectReport
 
